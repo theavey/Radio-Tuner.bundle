@@ -32,14 +32,20 @@ def MainMenu():
     i=1
 
     while Prefs['url'+str(i)] and Prefs['title'+str(i)] :
-        oc.add(CreateTrackObject(url=Prefs['url'+str(i)], title=Prefs['title'+str(i)], fmt=Prefs['type'+str(i)]))
+        try:
+            thumb = Prefs['thumb'+str(i)]
+        except KeyError:
+            thumb = ''
+        thumb = thumb if thumb else R(ICON)
+        oc.add(CreateTrackObject(url=Prefs['url'+str(i)], title=Prefs['title'+str(i)], fmt=Prefs['type'+str(i)],
+                                 thumb=thumb))
         i += 1
 
     return oc
 
 
 ####################################################################################################
-def CreateTrackObject(url, title, fmt, include_container=False, includeBandwidths=False):
+def CreateTrackObject(url, title, fmt, thumb, include_container=False, includeBandwidths=False):
       
 	# choose container and codec to use for the supplied format
     if fmt == 'mp3':
@@ -68,7 +74,7 @@ def CreateTrackObject(url, title, fmt, include_container=False, includeBandwidth
         key=Callback(CreateTrackObject, url=url, title=title, fmt=fmt, include_container=True, includeBandwidths=False),
         rating_key=url,
         title=title,
-        thumb=R(ICON),
+        thumb=thumb,
         items=[
             MediaObject(
                 parts=[
